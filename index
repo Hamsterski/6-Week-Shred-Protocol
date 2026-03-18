@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6-Week Shred Protocol</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #ff5722;
+    --orange-mid: #ff572260;
+    --orange-dim: #ff572220;
+    --bg: #0c0c0f;
+    --surface: #14141a;
+    --surface2: #1c1c24;
+    --border: #2a2a36;
+    --text: #e8e8f0;
+    --muted: #7a7a90;
+    --green: #4caf50;
+    --blue: #42a5f5;
+    --yellow: #ffc107;
+    --purple: #ab47bc;
+    --red: #ef5350;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Barlow', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #0c0c0f 0%, #1a0a05 50%, #0c0c0f 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 44px 20px 32px;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -80px; left: 50%; transform: translateX(-50%);
+    width: 700px; height: 340px;
+    background: radial-gradient(ellipse, #ff572212 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-eyebrow { font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; letter-spacing: 4px; color: var(--orange); text-transform: uppercase; margin-bottom: 10px; }
+  .hero-title { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 900; line-height: 0.95; color: #fff; text-transform: uppercase; letter-spacing: -1px; }
+  .hero-title span { color: var(--orange); }
+  .hero-sub { font-size: 0.8rem; color: var(--muted); margin-top: 12px; letter-spacing: 1px; }
+
+  /* STATS */
+  .stats-strip { display: flex; justify-content: center; flex-wrap: wrap; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .stat { padding: 13px 20px; text-align: center; border-right: 1px solid var(--border); }
+  .stat:last-child { border-right: none; }
+  .stat-val { font-family: 'Barlow Condensed', sans-serif; font-size: 1.35rem; font-weight: 900; color: var(--orange); }
+  .stat-lbl { font-size: 0.57rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-top: 2px; }
+
+  /* ROLLING CYCLE */
+  .cycle-wrap { padding: 20px 16px 0; max-width: 860px; margin: 0 auto; }
+  .cycle-strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-bottom: 8px; }
+  .cycle-day { border-radius: 6px; padding: 10px 4px; text-align: center; cursor: pointer; transition: all 0.15s; border: 1.5px solid transparent; }
+  .cycle-day:hover { filter: brightness(1.15); }
+  .cycle-day.active-cyc { border-color: #ffffff50 !important; filter: brightness(1.2); }
+  .cd-push { background: #1f1008; border-color: #ff572240; }
+  .cd-pull { background: #081520; border-color: #42a5f540; }
+  .cd-legs { background: #0d1a0d; border-color: #4caf5040; }
+  .cd-rest { background: #151520; border-color: #ab47bc40; }
+  .cd-num { font-family: 'Barlow Condensed', sans-serif; font-size: 0.58rem; font-weight: 700; color: var(--muted); }
+  .cd-name { font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 900; margin-top: 2px; }
+  .cd-push .cd-name { color: var(--orange); }
+  .cd-pull .cd-name { color: var(--blue); }
+  .cd-legs .cd-name { color: var(--green); }
+  .cd-rest .cd-name { color: var(--purple); }
+  .cd-sub { font-size: 0.54rem; color: var(--muted); margin-top: 2px; line-height: 1.2; }
+  .cycle-note { font-size: 0.72rem; color: var(--muted); text-align: center; padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 4px; }
+  .cycle-note strong { color: var(--orange); }
+
+  /* TOP NAV */
+  .top-nav { display: flex; justify-content: center; gap: 4px; padding: 14px 16px; flex-wrap: wrap; background: var(--surface); border-bottom: 1px solid var(--border); border-top: 1px solid var(--border); margin-top: 16px; }
+  .top-nav-btn { font-family: 'Barlow Condensed', sans-serif; font-size: 0.8rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 9px 22px; border-radius: 4px; border: 1.5px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.15s; }
+  .top-nav-btn:hover { border-color: var(--orange); color: var(--orange); }
+  .top-nav-btn.active { background: var(--orange); border-color: var(--orange); color: #fff; }
+
+  /* SUB NAV */
+  .sub-nav { display: flex; justify-content: center; gap: 4px; padding: 10px 16px; flex-wrap: wrap; background: #0f0f14; border-bottom: 1px solid var(--border); }
+  .sub-nav-btn { font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 6px 16px; border-radius: 4px; border: 1.5px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.15s; }
+  .sub-nav-btn:hover { border-color: var(--orange); color: var(--orange); }
+  .sub-nav-btn.active { border-color: var(--orange); color: var(--orange); background: var(--orange-dim); }
+
+  .content { max-width: 860px; margin: 0 auto; padding: 24px 16px; }
+  .module { display: none; }
+  .module.active { display: block; }
+  .submodule { display: none; }
+  .submodule.active { display: block; }
+
+  /* DAY TABS */
+  .day-tabs { display: flex; gap: 5px; margin-bottom: 20px; flex-wrap: wrap; }
+  .day-btn { font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 7px 12px; border-radius: 4px; border: 1.5px solid var(--border); background: var(--surface); color: var(--muted); cursor: pointer; transition: all 0.15s; }
+  .day-btn.push-btn.active, .day-btn.push-btn:hover { border-color: var(--orange); color: var(--orange); background: #1f1008; }
+  .day-btn.pull-btn.active, .day-btn.pull-btn:hover { border-color: var(--blue); color: var(--blue); background: #081520; }
+  .day-btn.legs-btn.active, .day-btn.legs-btn:hover { border-color: var(--green); color: var(--green); background: #0d1a0d; }
+  .day-btn.rest-btn.active, .day-btn.rest-btn:hover { border-color: var(--purple); color: var(--purple); background: #15101a; }
+  .day-panel { display: none; }
+  .day-panel.active { display: block; }
+
+  /* SESSION HEADER */
+  .session-hdr { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 20px; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; }
+  .session-hdr.push-hdr { border-left: 4px solid var(--orange); }
+  .session-hdr.pull-hdr { border-left: 4px solid var(--blue); }
+  .session-hdr.legs-hdr { border-left: 4px solid var(--green); }
+  .session-hdr.rest-hdr { border-left: 4px solid var(--purple); }
+  .badge { font-family: 'Barlow Condensed', sans-serif; font-size: 0.62rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 4px 10px; border-radius: 3px; white-space: nowrap; margin-top: 3px; }
+  .badge-push { background: var(--orange); color: #fff; }
+  .badge-pull { background: var(--blue); color: #fff; }
+  .badge-legs { background: var(--green); color: #fff; }
+  .badge-rest { background: var(--purple); color: #fff; }
+  .session-name { font-family: 'Barlow Condensed', sans-serif; font-size: 1.3rem; font-weight: 700; color: #fff; }
+  .session-desc { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
+
+  /* SECTION LABEL */
+  .slabel { font-family: 'Barlow Condensed', sans-serif; font-size: 0.62rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--orange); margin: 18px 0 10px; display: flex; align-items: center; gap: 8px; }
+  .slabel::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .slabel.blue { color: var(--blue); }
+  .slabel.green { color: var(--green); }
+  .slabel.purple { color: var(--purple); }
+  .slabel.yellow { color: var(--yellow); }
+  .slabel.red { color: var(--red); }
+
+  /* EXERCISE ROWS */
+  .ex-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 11px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 5px; transition: border-color 0.15s; }
+  .ex-row:hover { border-color: #3a3a50; }
+  .ex-name { font-weight: 600; font-size: 0.83rem; color: var(--text); }
+  .ex-note { font-size: 0.69rem; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+  .ex-sets { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.88rem; color: var(--orange); white-space: nowrap; margin-left: 14px; padding-top: 2px; }
+  .tag { font-size: 0.57rem; font-weight: 700; padding: 2px 6px; border-radius: 3px; margin-left: 5px; vertical-align: middle; display: inline-block; }
+  .tag-back { background: #ff572215; color: #ff8a65; border: 1px solid #ff572240; }
+  .tag-core { background: #42a5f515; color: #90caf9; border: 1px solid #42a5f540; }
+
+  /* CARDIO BLOCK */
+  .cardio-block { border-radius: 8px; padding: 14px 16px; margin-top: 14px; }
+  .cb-orange { background: linear-gradient(135deg, var(--surface), #1a120a); border: 1px solid var(--orange-mid); }
+  .cb-blue { background: linear-gradient(135deg, var(--surface), #0a1520); border: 1px solid #42a5f550; }
+  .cb-green { background: linear-gradient(135deg, var(--surface), #0a1a0a); border: 1px solid #4caf5050; }
+  .cb-purple { background: linear-gradient(135deg, var(--surface), #150a1a); border: 1px solid #ab47bc50; }
+  .cardio-hdr { font-family: 'Barlow Condensed', sans-serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+  .cb-orange .cardio-hdr { color: var(--orange); }
+  .cb-blue .cardio-hdr { color: var(--blue); }
+  .cb-green .cardio-hdr { color: var(--green); }
+  .cb-purple .cardio-hdr { color: var(--purple); }
+  .cardio-row { display: flex; justify-content: space-between; font-size: 0.74rem; padding: 5px 0; border-bottom: 1px solid #2a2020; color: #ccc; }
+  .cardio-row:last-child { border-bottom: none; }
+  .c-val { font-weight: 700; }
+  .cb-orange .c-val { color: #ffab80; }
+  .cb-blue .c-val { color: #90caf9; }
+  .cb-green .c-val { color: #a5d6a7; }
+  .cb-purple .c-val { color: #ce93d8; }
+
+  /* PHASES */
+  .phase-strip { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+  .phase-card { border-radius: 8px; padding: 14px; text-align: center; }
+  .ph-1 { background: #0a1a0a; border: 1px solid var(--green); }
+  .ph-2 { background: #1a100a; border: 1px solid #ff9800; }
+  .ph-3 { background: #1a0a0a; border: 1px solid #f44336; }
+  .phase-name { font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 2px; }
+  .ph-1 .phase-name { color: var(--green); }
+  .ph-2 .phase-name { color: #ff9800; }
+  .ph-3 .phase-name { color: #f44336; }
+  .phase-wks { font-size: 0.62rem; color: var(--muted); }
+
+  /* PRINCIPLES */
+  .principle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .principle { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px; font-size: 0.73rem; line-height: 1.6; color: #bbb; }
+  .principle strong { font-family: 'Barlow Condensed', sans-serif; font-size: 0.68rem; letter-spacing: 1px; text-transform: uppercase; color: var(--orange); display: block; margin-bottom: 6px; }
+
+  /* NUTRITION */
+  .macro-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+  .macro-card { border-radius: 8px; padding: 14px 10px; text-align: center; }
+  .mc-cal { background: #1a0e06; border: 1px solid var(--orange-mid); }
+  .mc-p { background: #06141f; border: 1px solid #42a5f540; }
+  .mc-c { background: #06140a; border: 1px solid #4caf5040; }
+  .mc-f { background: #141206; border: 1px solid #ffc10740; }
+  .macro-val { font-family: 'Barlow Condensed', sans-serif; font-size: 1.5rem; font-weight: 900; }
+  .mc-cal .macro-val { color: var(--orange); }
+  .mc-p .macro-val { color: var(--blue); }
+  .mc-c .macro-val { color: var(--green); }
+  .mc-f .macro-val { color: var(--yellow); }
+  .macro-lbl { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-top: 4px; }
+
+  .meal-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
+  .meal-header { display: flex; align-items: center; gap: 12px; padding: 13px 16px; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 8px; }
+  .meal-time { font-family: 'Barlow Condensed', sans-serif; font-size: 0.63rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); min-width: 65px; }
+  .meal-name { font-family: 'Barlow Condensed', sans-serif; font-size: 1.05rem; font-weight: 700; color: #fff; flex: 1; }
+  .meal-macros { display: flex; gap: 8px; }
+  .macro-pill { font-family: 'Barlow Condensed', sans-serif; font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 12px; }
+  .mp-cal { background: #ff572215; color: var(--orange); border: 1px solid #ff572240; }
+  .mp-p { background: #42a5f515; color: var(--blue); border: 1px solid #42a5f540; }
+  .meal-body { padding: 12px 16px; }
+  .food-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid #1e1e28; }
+  .food-row:last-child { border-bottom: none; }
+  .food-name { font-weight: 600; font-size: 0.82rem; color: var(--text); }
+  .food-note { font-size: 0.68rem; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+  .food-portion { font-family: 'Barlow Condensed', sans-serif; font-size: 0.82rem; font-weight: 700; color: var(--green); white-space: nowrap; margin-left: 12px; }
+
+  .portion-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+  .portion-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 10px; text-align: center; }
+  .portion-emoji { font-size: 1.8rem; margin-bottom: 6px; }
+  .portion-name { font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--green); margin-bottom: 4px; }
+  .portion-desc { font-size: 0.66rem; color: var(--muted); line-height: 1.5; }
+  .portion-example { font-size: 0.62rem; color: #888; margin-top: 5px; font-style: italic; }
+
+  .dinner-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  .dinner-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 13px; transition: border-color 0.15s; }
+  .dinner-card:hover { border-color: var(--green); }
+  .dinner-protein { font-family: 'Barlow Condensed', sans-serif; font-size: 0.9rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .dinner-detail { font-size: 0.69rem; color: var(--muted); line-height: 1.5; }
+  .dinner-macros { display: flex; gap: 7px; margin-top: 8px; }
+  .dp { font-family: 'Barlow Condensed', sans-serif; font-size: 0.63rem; font-weight: 700; padding: 2px 7px; border-radius: 10px; }
+  .dp-cal { background: #ff572215; color: var(--orange); border: 1px solid #ff572235; }
+  .dp-p { background: #42a5f515; color: var(--blue); border: 1px solid #42a5f535; }
+
+  .rule-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .rule-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 13px; }
+  .rule-card strong { font-family: 'Barlow Condensed', sans-serif; font-size: 0.66rem; letter-spacing: 1px; text-transform: uppercase; display: block; margin-bottom: 6px; padding-left: 8px; }
+  .rule-card p { font-size: 0.72rem; color: #bbb; line-height: 1.6; }
+  .rule-green strong { color: var(--green); border-left: 3px solid var(--green); }
+  .rule-orange strong { color: var(--orange); border-left: 3px solid var(--orange); }
+  .rule-blue strong { color: var(--blue); border-left: 3px solid var(--blue); }
+  .rule-red strong { color: var(--red); border-left: 3px solid var(--red); }
+  .rule-yellow strong { color: var(--yellow); border-left: 3px solid var(--yellow); }
+  .rule-purple strong { color: var(--purple); border-left: 3px solid var(--purple); }
+
+  .alcohol-card { background: linear-gradient(135deg, #1a0e06, #1a1006); border: 1px solid #ffc10740; border-radius: 10px; padding: 16px; margin-bottom: 12px; }
+  .alcohol-hdr { font-family: 'Barlow Condensed', sans-serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--yellow); margin-bottom: 12px; }
+  .drink-row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid #2a1e08; font-size: 0.75rem; color: #ccc; }
+  .drink-row:last-child { border-bottom: none; }
+  .drink-cal { color: var(--yellow); font-weight: 700; font-family: 'Barlow Condensed', sans-serif; }
+
+  .note-box { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--orange); border-radius: 6px; padding: 12px 14px; font-size: 0.74rem; color: #bbb; line-height: 1.6; margin-bottom: 12px; }
+  .note-box.green { border-left-color: var(--green); }
+  .note-box.blue { border-left-color: var(--blue); }
+  .note-box strong { color: var(--orange); }
+  .note-box.green strong { color: var(--green); }
+  .note-box.blue strong { color: var(--blue); }
+
+  @media (max-width: 580px) {
+    .principle-grid, .rule-grid, .dinner-grid { grid-template-columns: 1fr; }
+    .macro-grid, .portion-grid { grid-template-columns: repeat(2,1fr); }
+    .stats-strip { flex-direction: column; }
+    .stat { border-right: none; border-bottom: 1px solid var(--border); }
+    .phase-strip { grid-template-columns: 1fr; }
+    .cd-sub { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Science-Based · Rolling PPL · No-Tracking Nutrition</div>
+  <div class="hero-title">6-Week <span>Shred</span><br>Protocol</div>
+  <div class="hero-sub">193 LBS · 5'11" · ~15–17% BF → ~11% BY MAY 1 · LOWER BACK MODIFIED</div>
+</div>
+
+<div class="stats-strip">
+  <div class="stat"><div class="stat-val">~12 lbs</div><div class="stat-lbl">Fat Target</div></div>
+  <div class="stat"><div class="stat-val">~11%</div><div class="stat-lbl">Goal BF%</div></div>
+  <div class="stat"><div class="stat-val">2×</div><div class="stat-lbl">Muscle Freq/Wk</div></div>
+  <div class="stat"><div class="stat-val">2,150</div><div class="stat-lbl">Train Day Cal</div></div>
+  <div class="stat"><div class="stat-val">200g</div><div class="stat-lbl">Protein/Day</div></div>
+  <div class="stat"><div class="stat-val">May 1</div><div class="stat-lbl">Target Date</div></div>
+</div>
+
+<!-- ROLLING CYCLE -->
+<div class="cycle-wrap">
+  <div class="slabel" style="margin-top:16px">Rolling 7-Day Cycle — Click Any Day to Jump to That Workout</div>
+  <div class="cycle-strip">
+    <div class="cycle-day cd-legs active-cyc" onclick="jumpToDay('d3',2)"><div class="cd-num">Start Here</div><div class="cd-name">LEGS A</div><div class="cd-sub">Your Day 1</div></div>
+    <div class="cycle-day cd-push" onclick="jumpToDay('d4',3)"><div class="cd-num">Day 2</div><div class="cd-name">PUSH B</div><div class="cd-sub">Shoulders Chest</div></div>
+    <div class="cycle-day cd-pull" onclick="jumpToDay('d5',4)"><div class="cd-num">Day 3</div><div class="cd-name">PULL B</div><div class="cd-sub">Back Biceps</div></div>
+    <div class="cycle-day cd-legs" onclick="jumpToDay('d6',5)"><div class="cd-num">Day 4</div><div class="cd-name">LEGS B</div><div class="cd-sub">Posterior Chain</div></div>
+    <div class="cycle-day cd-rest" onclick="jumpToDay('d7',6)"><div class="cd-num">Day 5</div><div class="cd-name">REST</div><div class="cd-sub">Active Recovery</div></div>
+    <div class="cycle-day cd-push" onclick="jumpToDay('d1',0)"><div class="cd-num">Day 6</div><div class="cd-name">PUSH A</div><div class="cd-sub">Chest Shoulders</div></div>
+    <div class="cycle-day cd-pull" onclick="jumpToDay('d2',1)"><div class="cd-num">Day 7</div><div class="cd-name">PULL A</div><div class="cd-sub">Back Biceps</div></div>
+  </div>
+  <div class="cycle-note"><strong>Why rolling beats calendar:</strong> Muscle doesn't care what day it is. Rolling guarantees 48–72 hrs between same-muscle sessions — the optimal recovery window — every single time. You hit upper yesterday → Legs A today is your entry point.</div>
+</div>
+
+<!-- TOP NAV -->
+<div class="top-nav">
+  <button class="top-nav-btn active" onclick="showModule('training', this)">🏋️ Training</button>
+  <button class="top-nav-btn" onclick="showModule('nutrition', this)">🥗 Nutrition</button>
+  <button class="top-nav-btn" onclick="showModule('phases', this)">📈 Phases</button>
+  <button class="top-nav-btn" onclick="showModule('cardio', this)">🏃 Cardio</button>
+</div>
+
+<div class="content">
+
+  <!-- ═══════════════ TRAINING ═══════════════ -->
+  <div class="module active" id="module-training">
+    <div class="day-tabs">
+      <button class="day-btn legs-btn active" id="tab-d3" onclick="showDay('d3',this)">Legs A ← Start Here</button>
+      <button class="day-btn push-btn" id="tab-d4" onclick="showDay('d4',this)">Push B</button>
+      <button class="day-btn pull-btn" id="tab-d5" onclick="showDay('d5',this)">Pull B</button>
+      <button class="day-btn legs-btn" id="tab-d6" onclick="showDay('d6',this)">Legs B</button>
+      <button class="day-btn rest-btn" id="tab-d7" onclick="showDay('d7',this)">Rest</button>
+      <button class="day-btn push-btn" id="tab-d1" onclick="showDay('d1',this)">Push A</button>
+      <button class="day-btn pull-btn" id="tab-d2" onclick="showDay('d2',this)">Pull A</button>
+    </div>
+
+    <!-- LEGS A -->
+    <div class="day-panel active" id="day-d3">
+      <div class="session-hdr legs-hdr"><div class="badge badge-legs">Legs A</div><div><div class="session-name">Quad Dominant + Core</div><div class="session-desc">Spine-safe lower body · Your Day 1 entry point · 45 min lift + 15 min bike</div></div></div>
+      <div class="slabel green">Main Lifts — Spine-Safe</div>
+      <div class="ex-row"><div><div class="ex-name">Leg Press <span class="tag tag-back">BACK ✓</span></div><div class="ex-note">Primary movement — replaces barbell squat, zero spinal compression</div></div><div class="ex-sets">4 × 10–12</div></div>
+      <div class="ex-row"><div><div class="ex-name">Goblet Squat <span class="tag tag-back">BACK ✓</span></div><div class="ex-note">Goblet position forces upright torso — spine stays neutral throughout</div></div><div class="ex-sets">3 × 12</div></div>
+      <div class="ex-row"><div><div class="ex-name">Leg Extension</div><div class="ex-note">Full extension, 2s squeeze at top</div></div><div class="ex-sets">3 × 12–15</div></div>
+      <div class="ex-row"><div><div class="ex-name">Seated Leg Curl</div><div class="ex-note">Slow eccentric, full ROM</div></div><div class="ex-sets">3 × 12–15</div></div>
+      <div class="ex-row"><div><div class="ex-name">Standing Calf Raise</div><div class="ex-note">Full stretch at bottom, 1s pause at top</div></div><div class="ex-sets">4 × 15–20</div></div>
+      <div class="slabel green">Core Stability <span class="tag tag-core">CORE</span></div>
+      <div class="ex-row"><div><div class="ex-name">Dead Bug</div><div class="ex-note">Low back pressed flat to floor — slow and deliberate</div></div><div class="ex-sets">3 × 10 ea.</div></div>
+      <div class="ex-row"><div><div class="ex-name">Bird Dog</div><div class="ex-note">Hips stay level — quality beats speed</div></div><div class="ex-sets">3 × 10 ea.</div></div>
+      <div class="ex-row"><div><div class="ex-name">Plank</div><div class="ex-note">Posterior pelvic tilt — squeeze glutes throughout</div></div><div class="ex-sets">3 × 40s</div></div>
+      <div class="cardio-block cb-green"><div class="cardio-hdr">🚴 Finisher — 15 min Bike (Low Impact)</div><div class="cardio-row"><span>Mode</span><span class="c-val">Steady state</span></div><div class="cardio-row"><span>Effort</span><span class="c-val">RPE 5–6 / 10</span></div></div>
+    </div>
+
+    <!-- PUSH B -->
+    <div class="day-panel" id="day-d4">
+      <div class="session-hdr push-hdr"><div class="badge badge-push">Push B</div><div><div class="session-name">Shoulders · Chest · Triceps</div><div class="session-desc">Shoulder dominant variation · Higher reps, pump focus · 45 min + 15 min HIIT</div></div></div>
+      <div class="slabel">Main Lifts</div>
+      <div class="ex-row"><div><div class="ex-name">Arnold Press</div><div class="ex-note">Full rotation hits all 3 delt heads — slow and controlled</div></div><div class="ex-sets">4 × 10–12</div></div>
+      <div class="ex-row"><div><div class="ex-name">Cable Chest Fly (High to Low)</div><div class="ex-note">Full stretch at start, hard squeeze at center</div></div><div class="ex-sets">3 × 12–15</div></div>
+      <div class="ex-row"><div><div class="ex-name">Incline DB Press</div><div class="ex-note">30° angle, upper chest, slow eccentric</div></div><div class="ex-sets">3 × 10–12</div></div>
+      <div class="ex-row"><div><div class="ex-name">Lateral Raise → Front Raise Superset</div><div class="ex-note">No rest between — same DBs, straight into front raise</div></div><div class="ex-sets">3 × 12+12</div></div>
+      <div class="ex-row"><div><div class="ex-name">Skull Crushers or Dip Machine</div><div class="ex-note">Tricep isolation — go to failure on last set</div></div><div class="ex-sets">3 × 12–15</div></div>
+      <div class="cardio-block cb-orange"><div class="cardio-hdr">⚡ Finisher — 15 min Treadmill or Bike HIIT</div><div class="cardio-row"><span>Sprint intervals × 8</span><span class="c-val">20s max / 40s walk</span></div><div class="cardio-row"><span>Sprint effort</span><span class="c-val">90–95% max HR</span></div></div>
+    </div>
+
+    <!-- PULL B -->
+    <div class="day-panel" id="day-d5">
+      <div class="session-hdr pull-hdr"><div class="badge badge-pull">Pull B</div><div><div class="session-name">Back · Biceps · Core</div><div class="session-desc">Strength variation · Heavy pulls, core emphasis, max calorie finisher</div></div></div>
+      <div class="slabel blue">Main Lifts</div>
+      <div class="ex-row"><div><div class="ex-name">Pull-Ups (or Assisted)</div><div class="ex-note">Max reps each set — full dead hang at bottom, chin over bar</div></div><div class="ex-sets">4 × max</div></div>
+      <div class="ex-row"><div><div class="ex-name">Chest Supported DB Row <span class="tag tag-back">BACK ✓</span></div><div class="ex-note">Chest on incline bench — completely removes lower back from the equation</div></div><div class="ex-sets">3 × 10–12</div></div>
+      <div class="ex-row"><div><div class="ex-name">Cable Straight Arm Pullover</div><div class="ex-note">Lat isolation — long ROM, squeeze hard at bottom</div></div><div class="ex-sets">3 × 12–15</div></div>
+      <div class="ex-row"><div><div class="ex-name">Reverse Cable Fly</div><div class="ex-note">Rear delt + posture — key for that wide back appearance</div></div><div class="ex-sets">3 × 15</div></div>
+      <div class="ex-row"><div><div class="ex-name">Incline DB Curl</div><div class="ex-note">Maximum bicep stretch — zero momentum, slow tempo</div></div><div class="ex-sets">3 × 12</div></div>
+      <div class="slabel blue">Core Circuit <span class="tag tag-core">CORE</span></div>
+      <div class="ex-row"><div><div class="ex-name">Pallof Press</div><div class="ex-note">Anti-rotation — completely safe for lower back</div></div><div class="ex-sets">3 × 12 ea.</div></div>
+      <div class="ex-row"><div><div class="ex-name">Cable Crunch or Ab Wheel</div><div class="ex-note">Controlled — eliminate hip flexor compensation</div></div><div class="ex-sets">3 × 15</div></div>
+      <div class="cardio-block cb-blue"><div class="cardio-hdr">🔥 Finisher — 15 min Rower Max Effort</div><div class="cardio-row"><span>Protocol</span><span class="c-val">2 min hard / 1 min easy × 4</span></div><div class="cardio-row"><span>Goal</span><span class="c-val">Maximum calories to end the session</span></div></div>
+    </div>
+
+    <!-- LEGS B -->
+    <div class="day-panel" id="day-d6">
+      <div class="session-hdr legs-hdr"><div class="badge badge-legs">Legs B</div><div><div class="session-name">Posterior Chain · Hams · Glutes</div><div class="session-desc">Hip hinge dominant — hamstrings, glutes, back-safe unilateral work</div></div></div>
+      <div class="slabel green">Main Lifts — Posterior Focus</div>
+      <div class="ex-row"><div><div class="ex-name">Romanian Deadlift (DB or Moderate BB) <span class="tag tag-back">BACK ✓</span></div><div class="ex-note">MODERATE weight only — hinge with soft knee, stop before any rounding</div></div><div class="ex-sets">4 × 10–12</div></div>
+      <div class="ex-row"><div><div class="ex-name">Bulgarian Split Squat (DBs at sides) <span class="tag tag-back">BACK ✓</span></div><div class="ex-note">Rear foot elevated, DBs at sides — zero spinal load. King of unilateral leg work.</div></div><div class="ex-sets">3 × 10 ea.</div></div>
+      <div class="ex-row"><div><div class="ex-name">Lying Leg Curl</div><div class="ex-note">3s eccentric — hamstring emphasis, full ROM</div></div><div class="ex-sets">3 × 12–15</div></div>
+      <div class="ex-row"><div><div class="ex-name">Hip Thrust (BW or DB) <span class="tag tag-back">BACK ✓</span></div><div class="ex-note">Bench-supported — glute dominant, very low spinal stress</div></div><div class="ex-sets">3 × 12–15</div></div>
+      <div class="ex-row"><div><div class="ex-name">Leg Press — Feet High &amp; Wide <span class="tag tag-back">BACK ✓</span></div><div class="ex-note">High foot placement shifts emphasis to glutes and hamstrings</div></div><div class="ex-sets">3 × 12</div></div>
+      <div class="ex-row"><div><div class="ex-name">Seated Calf Raise</div><div class="ex-note">Soleus focus — slow, full ROM</div></div><div class="ex-sets">4 × 15–20</div></div>
+      <div class="cardio-block cb-green"><div class="cardio-hdr">🚶 Finisher — 15 min Incline Treadmill LISS</div><div class="cardio-row"><span>Incline</span><span class="c-val">8–10%</span></div><div class="cardio-row"><span>Speed</span><span class="c-val">2.8–3.2 mph steady</span></div></div>
+    </div>
+
+    <!-- REST -->
+    <div class="day-panel" id="day-d7">
+      <div class="session-hdr rest-hdr"><div class="badge badge-rest">Rest</div><div><div class="session-name">Active Recovery</div><div class="session-desc">No lifting — mobility, walking, and tissue quality work only</div></div></div>
+      <div class="slabel purple">Morning</div>
+      <div class="ex-row"><div><div class="ex-name">🐕 Dog Walk — Extended</div><div class="ex-note">30–40 min fasted. NEAT calories with zero recovery cost.</div></div><div class="ex-sets">~200 cal</div></div>
+      <div class="slabel purple">Mobility Circuit — 20 min</div>
+      <div class="ex-row"><div><div class="ex-name">Hip Flexor Stretch (90/90)</div><div class="ex-note">3 min per side — tight hip flexors are a primary driver of lower back pain</div></div><div class="ex-sets">3 min ea.</div></div>
+      <div class="ex-row"><div><div class="ex-name">Cat-Cow + Thoracic Rotation</div><div class="ex-note">Spinal mobility directly aids lower back recovery</div></div><div class="ex-sets">2 × 10</div></div>
+      <div class="ex-row"><div><div class="ex-name">Piriformis / Glute Stretch</div><div class="ex-note">Figure-4 on back — releases sciatic tension often linked to lumbar issues</div></div><div class="ex-sets">2 min ea.</div></div>
+      <div class="ex-row"><div><div class="ex-name">World's Greatest Stretch</div><div class="ex-note">Hip, thoracic, and hamstring in one movement — 5 slow reps per side</div></div><div class="ex-sets">5 ea.</div></div>
+      <div class="ex-row"><div><div class="ex-name">Child's Pose + Thread the Needle</div><div class="ex-note">Decompress the lower back and open thoracic rotation</div></div><div class="ex-sets">2 min total</div></div>
+      <div class="slabel purple">Evening</div>
+      <div class="ex-row"><div><div class="ex-name">🐕 Dog Walk — Easy Pace</div><div class="ex-note">20–30 min post-dinner. Improves insulin sensitivity. Genuine recovery — keep it easy.</div></div><div class="ex-sets">~120 cal</div></div>
+      <div class="cardio-block cb-purple"><div class="cardio-hdr">💜 Rest Day Rules</div><div class="cardio-row"><span>No HIIT, no sprints, no heavy lifting</span><span class="c-val">Full stop</span></div><div class="cardio-row"><span>Protein still 200g today</span><span class="c-val">Non-negotiable</span></div><div class="cardio-row"><span>Sleep 7–9 hrs</span><span class="c-val">GH peaks in deep sleep</span></div><div class="cardio-row"><span>Water — 1 gallon minimum</span><span class="c-val">Tissue repair needs it</span></div></div>
+    </div>
+
+    <!-- PUSH A -->
+    <div class="day-panel" id="day-d1">
+      <div class="session-hdr push-hdr"><div class="badge badge-push">Push A</div><div><div class="session-name">Chest · Shoulders · Triceps</div><div class="session-desc">Strength anchor — heavier compound focus · 45 min lift + 15 min HIIT</div></div></div>
+      <div class="slabel">Main Lifts</div>
+      <div class="ex-row"><div><div class="ex-name">Barbell Bench Press</div><div class="ex-note">Primary strength movement — 3s eccentric, controlled press</div></div><div class="ex-sets">4 × 6–8</div></div>
+      <div class="ex-row"><div><div class="ex-name">Incline Dumbbell Press</div><div class="ex-note">30° incline, upper chest emphasis, full ROM</div></div><div class="ex-sets">3 × 10–12</div></div>
+      <div class="ex-row"><div><div class="ex-name">Seated DB Shoulder Press <span class="tag tag-back">BACK ✓</span></div><div class="ex-note">Seated removes spinal loading — full controlled ROM</div></div><div class="ex-sets">3 × 10–12</div></div>
+      <div class="ex-row"><div><div class="ex-name">Cable Lateral Raise</div><div class="ex-note">Single arm, 2s hold at top, slow descent</div></div><div class="ex-sets">3 × 15 ea.</div></div>
+      <div class="ex-row"><div><div class="ex-name">Rope Tricep Pushdown</div><div class="ex-note">Elbows pinned, flare hands at bottom</div></div><div class="ex-sets">3 × 12–15</div></div>
+      <div class="ex-row"><div><div class="ex-name">Overhead DB Tricep Extension</div><div class="ex-note">Long head emphasis — deep stretch at bottom</div></div><div class="ex-sets">2 × 15</div></div>
+      <div class="cardio-block cb-orange"><div class="cardio-hdr">⚡ Finisher — 15 min Rower or Bike HIIT</div><div class="cardio-row"><span>Warm-up</span><span class="c-val">2 min easy</span></div><div class="cardio-row"><span>Sprint intervals × 8</span><span class="c-val">30s hard / 60s easy</span></div><div class="cardio-row"><span>Cool down</span><span class="c-val">2 min easy</span></div></div>
+    </div>
+
+    <!-- PULL A -->
+    <div class="day-panel" id="day-d2">
+      <div class="session-hdr pull-hdr"><div class="badge badge-pull">Pull A</div><div><div class="session-name">Back · Biceps</div><div class="session-desc">Hypertrophy focus — full ROM, controlled tempo · 45 min + 15 min LISS</div></div></div>
+      <div class="slabel blue">Main Lifts</div>
+      <div class="ex-row"><div><div class="ex-name">Lat Pulldown</div><div class="ex-note">Full stretch at top, drive elbows down toward hips</div></div><div class="ex-sets">4 × 8–10</div></div>
+      <div class="ex-row"><div><div class="ex-name">Seated Cable Row <span class="tag tag-back">BACK ✓</span></div><div class="ex-note">Stay upright — do not lean back aggressively</div></div><div class="ex-sets">3 × 10–12</div></div>
+      <div class="ex-row"><div><div class="ex-name">Single Arm DB Row <span class="tag tag-back">BACK ✓</span></div><div class="ex-note">Brace on bench — zero hip rotation, full elbow travel</div></div><div class="ex-sets">3 × 10 ea.</div></div>
+      <div class="ex-row"><div><div class="ex-name">Face Pulls</div><div class="ex-note">External rotation at end — rear delt and shoulder health</div></div><div class="ex-sets">3 × 15–20</div></div>
+      <div class="ex-row"><div><div class="ex-name">EZ Bar Curl</div><div class="ex-note">Strict form, 3s eccentric, no momentum</div></div><div class="ex-sets">3 × 12</div></div>
+      <div class="ex-row"><div><div class="ex-name">Alternating Hammer Curl</div><div class="ex-note">Brachialis emphasis — slow and deliberate</div></div><div class="ex-sets">2 × 15</div></div>
+      <div class="cardio-block cb-blue"><div class="cardio-hdr">🚶 Finisher — 15 min Incline Treadmill LISS</div><div class="cardio-row"><span>Incline</span><span class="c-val">8–12%</span></div><div class="cardio-row"><span>Speed</span><span class="c-val">2.8–3.2 mph</span></div><div class="cardio-row"><span>Mode</span><span class="c-val">Steady state, no holding rails</span></div></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ NUTRITION ═══════════════ -->
+  <div class="module" id="module-nutrition">
+
+    <!-- Sub Nav -->
+    <div class="sub-nav" style="margin: -24px -16px 24px; padding: 10px 16px;">
+      <button class="sub-nav-btn active" onclick="showSub('meal-plan', this)">Daily Plan</button>
+      <button class="sub-nav-btn" onclick="showSub('dinners', this)">Dinner Rotation</button>
+      <button class="sub-nav-btn" onclick="showSub('rules', this)">The Rules</button>
+      <button class="sub-nav-btn" onclick="showSub('weekend', this)">Weekend</button>
+    </div>
+
+    <!-- DAILY PLAN -->
+    <div class="submodule active" id="sub-meal-plan">
+      <div class="slabel green" style="margin-top:0">Daily Macro Targets</div>
+      <div class="macro-grid">
+        <div class="macro-card mc-cal"><div class="macro-val">2,150</div><div class="macro-lbl">Train Day Cal</div></div>
+        <div class="macro-card mc-p"><div class="macro-val">200g</div><div class="macro-lbl">Protein</div></div>
+        <div class="macro-card mc-c"><div class="macro-val">175g</div><div class="macro-lbl">Carbs</div></div>
+        <div class="macro-card mc-f"><div class="macro-val">60g</div><div class="macro-lbl">Fat</div></div>
+      </div>
+
+      <div class="day-tabs">
+        <button class="day-btn legs-btn active" onclick="showDay('nt', this)">Training Day</button>
+        <button class="day-btn rest-btn" onclick="showDay('nr', this)">Rest Day</button>
+      </div>
+
+      <div class="day-panel active" id="day-nt">
+        <div class="note-box green"><strong>Oats go at breakfast.</strong> This is the ideal slot — they blunt morning cortisol (which spikes naturally and eats muscle), fuel your noon gym session, and you never have to think about timing again. Just always at breakfast.</div>
+        <div class="meal-card">
+          <div class="meal-header"><div class="meal-time">7–8am</div><div class="meal-name">🍳 Breakfast — With Your Son</div><div class="meal-macros"><span class="macro-pill mp-cal">~530 cal</span><span class="macro-pill mp-p">33g protein</span></div></div>
+          <div class="meal-body">
+            <div class="food-row"><div><div class="food-name">4 Whole Eggs</div><div class="food-note">Scrambled, fried — however you cook them. Yolks stay in. Quality fat + cholesterol supports testosterone production on a cut.</div></div><div class="food-portion">4 eggs</div></div>
+            <div class="food-row"><div><div class="food-name">Oats — Plain Rolled</div><div class="food-note">No flavored packets. Plain only — cinnamon is fine. Breakfast is the best slot every day.</div></div><div class="food-portion">½ cup dry</div></div>
+            <div class="food-row"><div><div class="food-name">Black Coffee</div><div class="food-note">No sugar, no cream. Caffeine at 7–8am peaks right at your noon gym session. This timing is not an accident.</div></div><div class="food-portion">As needed</div></div>
+          </div>
+        </div>
+        <div class="meal-card">
+          <div class="meal-header"><div class="meal-time">11:30am</div><div class="meal-name">💪 Pre-Gym — At Work</div><div class="meal-macros"><span class="macro-pill mp-cal">~225 cal</span><span class="macro-pill mp-p">26g protein</span></div></div>
+          <div class="meal-body">
+            <div class="food-row"><div><div class="food-name">Whey Protein Shake</div><div class="food-note">Mix with water. 25–30g protein per scoop. Drink 20–30 min before training.</div></div><div class="food-portion">1 scoop</div></div>
+            <div class="food-row"><div><div class="food-name">Banana</div><div class="food-note">Fast carbs before training — fuels the session and reduces muscle breakdown during the lift</div></div><div class="food-portion">1 medium</div></div>
+          </div>
+        </div>
+        <div class="meal-card">
+          <div class="meal-header"><div class="meal-time">1–1:30pm</div><div class="meal-name">🐟 Post-Gym Lunch — At Work</div><div class="meal-macros"><span class="macro-pill mp-cal">~390 cal</span><span class="macro-pill mp-p">50g protein</span></div></div>
+          <div class="meal-body">
+            <div class="food-row"><div><div class="food-name">Sardines in Water or Olive Oil</div><div class="food-note">2 cans. One of the best shred foods on the planet — 46g protein, omega-3s to fight training inflammation, zero carbs. Already at the office.</div></div><div class="food-portion">2 cans</div></div>
+            <div class="food-row"><div><div class="food-name">Apple or Orange</div><div class="food-note">Post-workout fructose replenishes liver glycogen. Either works fine.</div></div><div class="food-portion">1 medium</div></div>
+          </div>
+        </div>
+        <div class="meal-card">
+          <div class="meal-header"><div class="meal-time">4–5pm</div><div class="meal-name">🥛 Afternoon — At Work or Home</div><div class="meal-macros"><span class="macro-pill mp-cal">~220 cal</span><span class="macro-pill mp-p">40g protein</span></div></div>
+          <div class="meal-body">
+            <div class="food-row"><div><div class="food-name">Whey Protein Shake</div><div class="food-note">Second scoop — bridges the gap to dinner and keeps protein synthesis elevated throughout the afternoon</div></div><div class="food-portion">1 scoop</div></div>
+          </div>
+        </div>
+        <div class="meal-card">
+          <div class="meal-header"><div class="meal-time">6:30pm</div><div class="meal-name">🍽️ Dinner</div><div class="meal-macros"><span class="macro-pill mp-cal">~500 cal</span><span class="macro-pill mp-p">50g protein</span></div></div>
+          <div class="meal-body">
+            <div class="food-row"><div><div class="food-name">Protein — Rotate from Dinner tab</div><div class="food-note">Chicken, turkey, salmon, beef, pork. See Dinner Rotation for full options.</div></div><div class="food-portion">2 palms</div></div>
+            <div class="food-row"><div><div class="food-name">Vegetables — Unlimited</div><div class="food-note">Broccoli, green beans, spinach, zucchini, peppers. Fill half the plate.</div></div><div class="food-portion">Fill the plate</div></div>
+            <div class="food-row"><div><div class="food-name">Starch (Training Days Only)</div><div class="food-note">Rice, potato, or sweet potato. Fist-sized. You earned it today.</div></div><div class="food-portion">1 fist</div></div>
+          </div>
+        </div>
+        <div class="meal-card">
+          <div class="meal-header"><div class="meal-time">9pm</div><div class="meal-name">🍨 Dessert — Greek Yogurt</div><div class="meal-macros"><span class="macro-pill mp-cal">~110 cal</span><span class="macro-pill mp-p">20g protein</span></div></div>
+          <div class="meal-body">
+            <div class="food-row"><div><div class="food-name">0% Plain Greek Yogurt</div><div class="food-note">Your dessert. Add berries or a drizzle of honey if needed. Casein protein digests slowly overnight — feeds muscle repair while you sleep.</div></div><div class="food-portion">¾ cup</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day-panel" id="day-nr">
+        <div class="note-box"><strong>Rest days = same protein, fewer carbs.</strong> Drop the pre-gym banana, drop the dinner starch. Total falls to ~1,900 cal. Protein stays at 200g. The yogurt at night becomes more important on rest days.</div>
+        <div class="meal-card">
+          <div class="meal-header"><div class="meal-time">7–8am</div><div class="meal-name">🍳 Breakfast — Same as Always</div><div class="meal-macros"><span class="macro-pill mp-cal">~530 cal</span><span class="macro-pill mp-p">33g protein</span></div></div>
+          <div class="meal-body">
+            <div class="food-row"><div><div class="food-name">4 Whole Eggs + Oats + Black Coffee</div><div class="food-note">No change here. Ritual stays intact every single morning.</div></div><div class="food-portion">Same as always</div></div>
+          </div>
+        </div>
+        <div class="meal-card">
+          <div class="meal-header"><div class="meal-time">12–1pm</div><div class="meal-name">🐟 Lunch — Sardines + Fruit</div><div class="meal-macros"><span class="macro-pill mp-cal">~310 cal</span><span class="macro-pill mp-p">47g protein</span></div></div>
+          <div class="meal-body">
+            <div class="food-row"><div><div class="food-name">Sardines — 2 Cans</div><div class="food-note">Same as training day</div></div><div class="food-portion">2 cans</div></div>
+            <div class="food-row"><div><div class="food-name">Apple or Orange (not banana today)</div><div class="food-note">Drop the banana — that was the training carb. Stick to lower sugar fruit.</div></div><div class="food-portion">1 medium</div></div>
+          </div>
+        </div>
+        <div class="meal-card">
+          <div class="meal-header"><div class="meal-time">3–4pm</div><div class="meal-name">🥛 Afternoon Shake</div><div class="meal-macros"><span class="macro-pill mp-cal">~120 cal</span><span class="macro-pill mp-p">25g protein</span></div></div>
+          <div class="meal-body">
+            <div class="food-row"><div><div class="food-name">Whey — Water Only</div><div class="food-note">Keep it lean today. No banana alongside.</div></div><div class="food-portion">1 scoop</div></div>
+          </div>
+        </div>
+        <div class="meal-card">
+          <div class="meal-header"><div class="meal-time">6:30pm</div><div class="meal-name">🍽️ Dinner — Protein + Veg Only</div><div class="meal-macros"><span class="macro-pill mp-cal">~420 cal</span><span class="macro-pill mp-p">50g protein</span></div></div>
+          <div class="meal-body">
+            <div class="food-row"><div><div class="food-name">Lean Protein (Chicken, Turkey, or White Fish preferred)</div><div class="food-note">Leaner cuts today — lower fat than beef or salmon on a rest day</div></div><div class="food-portion">2 palms</div></div>
+            <div class="food-row"><div><div class="food-name">Vegetables — Fill the Plate</div><div class="food-note">Unlimited. This replaces the volume you're losing by skipping starch.</div></div><div class="food-portion">Unlimited</div></div>
+            <div class="food-row"><div><div class="food-name">NO Starch Tonight</div><div class="food-note">No rice, no potato, no bread. You didn't earn the glycogen refill today.</div></div><div class="food-portion">Skip it</div></div>
+          </div>
+        </div>
+        <div class="meal-card">
+          <div class="meal-header"><div class="meal-time">9pm</div><div class="meal-name">🍨 Dessert — Greek Yogurt</div><div class="meal-macros"><span class="macro-pill mp-cal">~110 cal</span><span class="macro-pill mp-p">20g protein</span></div></div>
+          <div class="meal-body">
+            <div class="food-row"><div><div class="food-name">0% Plain Greek Yogurt</div><div class="food-note">More important on rest days — overnight protein synthesis continues even without training. This feeds it. Berries or cinnamon to taste.</div></div><div class="food-portion">¾ cup</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DINNERS -->
+    <div class="submodule" id="sub-dinners">
+      <div class="note-box green"><strong>Same structure every dinner:</strong> 2 palm-sized portions of protein + unlimited veg + 1 fist of starch on training days only. Partner cooking? Show them this page.</div>
+      <div class="slabel green" style="margin-top:0">Lean — Use Most Often</div>
+      <div class="dinner-grid">
+        <div class="dinner-card"><div class="dinner-protein">🍗 Chicken Breast</div><div class="dinner-detail">Grill, bake, or pan-sear. Season freely — salt, garlic, paprika, cumin. No cream sauces.</div><div class="dinner-macros"><span class="dp dp-cal">~280 cal</span><span class="dp dp-p">53g protein</span></div></div>
+        <div class="dinner-card"><div class="dinner-protein">🦃 Ground Turkey (93%)</div><div class="dinner-detail">Taco bowls (no tortilla), stir fry, or simple skillet with peppers and onions.</div><div class="dinner-macros"><span class="dp dp-cal">~260 cal</span><span class="dp dp-p">47g protein</span></div></div>
+        <div class="dinner-card"><div class="dinner-protein">🐟 White Fish</div><div class="dinner-detail">Tilapia, cod, halibut. Bake or pan-fry. Lemon, salt, herbs. Fast to cook, very lean.</div><div class="dinner-macros"><span class="dp dp-cal">~200 cal</span><span class="dp dp-p">42g protein</span></div></div>
+        <div class="dinner-card"><div class="dinner-protein">🥩 Pork Tenderloin</div><div class="dinner-detail">Leanest cut of pork. Marinate and roast. Rivals chicken breast in protein per calorie.</div><div class="dinner-macros"><span class="dp dp-cal">~250 cal</span><span class="dp dp-p">46g protein</span></div></div>
+      </div>
+      <div class="slabel orange">Moderate — 2–3x Per Week</div>
+      <div class="dinner-grid">
+        <div class="dinner-card"><div class="dinner-protein">🍣 Salmon</div><div class="dinner-detail">Higher fat but omega-3s reduce inflammation from training. Worth the extra calories 2–3x/week. 6oz fillet.</div><div class="dinner-macros"><span class="dp dp-cal">~370 cal</span><span class="dp dp-p">40g protein</span></div></div>
+        <div class="dinner-card"><div class="dinner-protein">🥩 Lean Ground Beef (93%)</div><div class="dinner-detail">Taco bowl, stir fry, or burger patty (no bun). More satiating than turkey — good for high hunger days.</div><div class="dinner-macros"><span class="dp dp-cal">~320 cal</span><span class="dp dp-p">42g protein</span></div></div>
+        <div class="dinner-card"><div class="dinner-protein">🥩 Steak — Sirloin or Flank</div><div class="dinner-detail">Sirloin or flank only, skip ribeye during the cut. 6oz max. Best post-workout or weekends.</div><div class="dinner-macros"><span class="dp dp-cal">~340 cal</span><span class="dp dp-p">44g protein</span></div></div>
+        <div class="dinner-card"><div class="dinner-protein">🍗 Chicken Thighs (Skin Off)</div><div class="dinner-detail">More flavor than breast, slightly higher fat. Skin off keeps it reasonable. Great when someone else is cooking.</div><div class="dinner-macros"><span class="dp dp-cal">~300 cal</span><span class="dp dp-p">38g protein</span></div></div>
+      </div>
+      <div class="slabel green">Unlimited Veg — Fill the Plate</div>
+      <div class="note-box green" style="margin-bottom:0">Broccoli · Asparagus · Green Beans · Zucchini · Spinach · Bell Peppers · Cauliflower · Brussels Sprouts · Cucumber · Tomatoes · Mushrooms<br><br><strong>Cook with olive oil or butter — 1 thumb max. Season aggressively. Bland food kills compliance.</strong></div>
+    </div>
+
+    <!-- RULES -->
+    <div class="submodule" id="sub-rules">
+      <div class="slabel green" style="margin-top:0">Hand Portion Guide — Your Calorie Counter</div>
+      <div class="portion-grid">
+        <div class="portion-card"><div class="portion-emoji">✊</div><div class="portion-name">Protein</div><div class="portion-desc">2 palm-sized portions per meal. Thickness counts, not just area.</div><div class="portion-example">~6oz chicken, 2 eggs, 1 can sardines</div></div>
+        <div class="portion-card"><div class="portion-emoji">🤜</div><div class="portion-name">Starch</div><div class="portion-desc">1 fist per meal. Training days only at dinner. Always at breakfast.</div><div class="portion-example">½ cup rice, 1 potato, ½ cup oats</div></div>
+        <div class="portion-card"><div class="portion-emoji">👍</div><div class="portion-name">Fat</div><div class="portion-desc">1 thumb per meal max. Oils, butter, dressings, avocado.</div><div class="portion-example">1 tsp olive oil, small pat butter</div></div>
+        <div class="portion-card"><div class="portion-emoji">🖐️</div><div class="portion-name">Vegetables</div><div class="portion-desc">2+ fistfuls every meal. Unlimited. Non-starchy only.</div><div class="portion-example">Broccoli, spinach, zucchini, peppers</div></div>
+      </div>
+      <div class="slabel green">Non-Negotiable Rules</div>
+      <div class="rule-grid">
+        <div class="rule-card rule-green"><strong>Protein Every Single Meal</strong><p>Never eat without a protein source. This one habit gets you to 200g/day automatically — no app required.</p></div>
+        <div class="rule-card rule-orange"><strong>Carbs Around Training Only</strong><p>Banana pre-gym, fruit post-gym, starch at dinner on training days. Rest days — oats at breakfast only. Carbs are fuel, not a right.</p></div>
+        <div class="rule-card rule-blue"><strong>2 Whey Scoops Daily</strong><p>One pre-gym, one mid-afternoon. 50g protein added to your day with zero cooking. Both training and rest days.</p></div>
+        <div class="rule-card rule-green"><strong>2 Sardine Cans at Lunch</strong><p>Every workday without exception. Already at the office. 46g protein, omega-3s, zero carbs. The cornerstone of your work nutrition.</p></div>
+        <div class="rule-card rule-red"><strong>No Liquid Calories</strong><p>No juice, soda, specialty coffee, sports drinks. Black coffee, water, sparkling water, and whey only. Liquid calories are invisible and will silently destroy this cut.</p></div>
+        <div class="rule-card rule-yellow"><strong>Hunger = More Protein First</strong><p>If genuinely hungry between meals, reach for protein — another shake, Greek yogurt, cottage cheese. Never a carb-only snack. Hunger usually means the last meal was low on protein.</p></div>
+      </div>
+      <div class="slabel red">Silent Cut Killers</div>
+      <div class="rule-grid">
+        <div class="rule-card rule-red"><strong>Flavored Oats / Instant Packets</strong><p>20–25g added sugar per packet. Plain rolled oats only.</p></div>
+        <div class="rule-card rule-red"><strong>Flavored Yogurt</strong><p>Regular yogurt is 20–30g sugar. 0% plain Greek only. Add berries for flavor.</p></div>
+        <div class="rule-card rule-red"><strong>Sauces and Dressings</strong><p>BBQ, ranch, teriyaki = 100–200 invisible cal per serving. Use hot sauce, mustard, salsa, lemon.</p></div>
+        <div class="rule-card rule-red"><strong>Cooking Oil Overuse</strong><p>A "drizzle" can be 200+ cal. Use a measured teaspoon or cooking spray every time.</p></div>
+      </div>
+    </div>
+
+    <!-- WEEKEND -->
+    <div class="submodule" id="sub-weekend">
+      <div class="note-box"><strong>A few drinks Saturday won't ruin this cut.</strong> Unmanaged drinking will. The strategy is earning the drinks by being leaner on Saturday's food — not white-knuckling abstinence.</div>
+      <div class="slabel yellow">Drink Calorie Reference</div>
+      <div class="alcohol-card">
+        <div class="alcohol-hdr">📊 Know What You're Drinking</div>
+        <div class="drink-row"><span>Light Beer (12oz)</span><span class="drink-cal">~100 cal</span></div>
+        <div class="drink-row"><span>Regular Beer (12oz)</span><span class="drink-cal">~150 cal</span></div>
+        <div class="drink-row"><span>Spirits — Whiskey, Vodka, Tequila (1.5oz)</span><span class="drink-cal">~100 cal</span></div>
+        <div class="drink-row"><span>Spirits + Soda Water (best choice)</span><span class="drink-cal">~100 cal total</span></div>
+        <div class="drink-row"><span>Dry Red or White Wine (5oz)</span><span class="drink-cal">~120 cal</span></div>
+        <div class="drink-row"><span>Craft IPA (12oz)</span><span class="drink-cal">~200–250 cal</span></div>
+        <div class="drink-row"><span>Mixed cocktails (margarita, rum & coke)</span><span class="drink-cal">~200–400 cal — avoid</span></div>
+      </div>
+      <div class="slabel yellow">Saturday Protocol</div>
+      <div class="rule-grid">
+        <div class="rule-card rule-yellow"><strong>Budget 3 Drinks Max</strong><p>3 light beers or spirits = ~300–350 cal. Manageable. 6+ drinks = 600–900 cal on top of food = cut paused for the week.</p></div>
+        <div class="rule-card rule-yellow"><strong>Eat Before You Drink</strong><p>High protein dinner before going out. Full stomach slows absorption, reduces overconsumption, and prevents 2am food decisions.</p></div>
+        <div class="rule-card rule-orange"><strong>Skip Dinner Starch That Day</strong><p>Frees up ~100 cal to put toward drinks. Small trade-off, big compliance win for the evening.</p></div>
+        <div class="rule-card rule-orange"><strong>Avoid the Drunk Food Trap</strong><p>This is where cuts die — not the drinks, but the 2am pizza. Decide before you leave the house: no late-night food. That one decision saves 1,000+ calories.</p></div>
+        <div class="rule-card rule-blue"><strong>Best Drink Choices</strong><p>Vodka / tequila / whiskey + soda water + lime. Dry red wine. Light beer. Lowest calorie, lowest sugar. Avoid IPAs, cocktails, and anything with juice or syrup.</p></div>
+        <div class="rule-card rule-green"><strong>Sunday is a Reset, Not a Punishment</strong><p>Back on the rest day protocol immediately. One evening of drinks + a clean Sunday does almost zero measurable damage to 6 weeks of results.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ PHASES ═══════════════ -->
+  <div class="module" id="module-phases">
+    <div class="slabel" style="margin-top:0">6-Week Progression Map</div>
+    <div class="phase-strip">
+      <div class="phase-card ph-1"><div class="phase-name">Foundation</div><div class="phase-wks">Weeks 1–2</div></div>
+      <div class="phase-card ph-2"><div class="phase-name">Accelerate</div><div class="phase-wks">Weeks 3–4</div></div>
+      <div class="phase-card ph-3"><div class="phase-name">Peak</div><div class="phase-wks">Weeks 5–6</div></div>
+    </div>
+    <div class="slabel">Weeks 1–2 · Foundation</div>
+    <div class="ex-row"><div><div class="ex-name">Calories</div><div class="ex-note">2,300/day — let the body adapt before tightening the deficit</div></div><div class="ex-sets">~500 deficit</div></div>
+    <div class="ex-row"><div><div class="ex-name">Cardio</div><div class="ex-note">Dog walks AM + PM · Gym finishers every session · ~60–70 active min/day total</div></div><div class="ex-sets">Base volume</div></div>
+    <div class="ex-row"><div><div class="ex-name">Lifting</div><div class="ex-note">Establish working weights across all 6 sessions. Form, feel, and rhythm of the rolling cycle.</div></div><div class="ex-sets">Learn the cycle</div></div>
+    <div class="slabel">Weeks 3–4 · Acceleration</div>
+    <div class="ex-row"><div><div class="ex-name">Calories</div><div class="ex-note">2,150/day — tighten now that adaptation is complete</div></div><div class="ex-sets">~650 deficit</div></div>
+    <div class="ex-row"><div><div class="ex-name">Cardio Add-On</div><div class="ex-note">1 lunch jog per cycle (20–25 min from home). Dog walks extend to 30 min each.</div></div><div class="ex-sets">+1 jog/cycle</div></div>
+    <div class="ex-row"><div><div class="ex-name">Lifting Density</div><div class="ex-note">Rest periods drop to 60–90s. Add one drop set per session on the primary compound.</div></div><div class="ex-sets">Higher density</div></div>
+    <div class="slabel">Weeks 5–6 · Peak</div>
+    <div class="ex-row"><div><div class="ex-name">Calories</div><div class="ex-note">2,050/day — deeper but NEVER sacrifice protein. Cut carbs, protect protein.</div></div><div class="ex-sets">~750 deficit</div></div>
+    <div class="ex-row"><div><div class="ex-name">Cardio Add-On</div><div class="ex-note">2 lunch jogs per cycle. Dog walks 30+ min. Maximum daily steps.</div></div><div class="ex-sets">+2 jogs/cycle</div></div>
+    <div class="ex-row"><div><div class="ex-name">Lifting</div><div class="ex-note">HOLD working weights. Never reduce load — the muscle needs progressive stimulus to stay.</div></div><div class="ex-sets">Hold the load</div></div>
+    <div class="slabel red">April 25–May 1 · Peak Week</div>
+    <div class="ex-row"><div><div class="ex-name">Mon–Thu — Water Load + Low Sodium</div><div class="ex-note">1.5 gallons water/day · Cut added sodium · Flush subcutaneous water retention</div></div><div class="ex-sets">Days 1–4</div></div>
+    <div class="ex-row"><div><div class="ex-name">Friday — Carb Refeed</div><div class="ex-note">Add 100g clean carbs (rice, oats) on top of normal intake. Refills glycogen — muscles look full not flat.</div></div><div class="ex-sets">Day 5</div></div>
+    <div class="ex-row"><div><div class="ex-name">Sat/Sun — The Payoff</div><div class="ex-note">Maintenance calories. Less water, full muscles. This is when you look your absolute best.</div></div><div class="ex-sets">Game day 🔥</div></div>
+  </div>
+
+  <!-- ═══════════════ CARDIO ═══════════════ -->
+  <div class="module" id="module-cardio">
+    <div class="slabel" style="margin-top:0">Daily Cardio Stack</div>
+    <div class="ex-row"><div><div class="ex-name">🌅 Morning Dog Walk — Fasted</div><div class="ex-note">Before breakfast. Fasted LISS oxidizes ~20% more fat as fuel (Howarth et al.). 20–30 min brisk. Zero extra time cost.</div></div><div class="ex-sets">~150 cal</div></div>
+    <div class="ex-row"><div><div class="ex-name">💪 Gym HIIT Finisher — Post Lift</div><div class="ex-note">15 min at end of every session. Rower, bike, or treadmill. Creates EPOC — metabolism elevated 12–24 hrs after.</div></div><div class="ex-sets">~150 cal</div></div>
+    <div class="ex-row"><div><div class="ex-name">🌆 Evening Dog Walk — Post Dinner</div><div class="ex-note">Post-meal walking significantly blunts glucose spikes and improves insulin sensitivity. 20–30 min. One of the most research-backed fat loss habits you can build.</div></div><div class="ex-sets">~120 cal</div></div>
+    <div class="ex-row"><div><div class="ex-name">🏃 Lunch Jog — From Home</div><div class="ex-note">Wks 3–4: 1x per cycle. Wks 5–6: 2x per cycle. 20–25 min moderate pace. Replaces gym finisher those days.</div></div><div class="ex-sets">~250 cal</div></div>
+    <div class="ex-row"><div><div class="ex-name">👟 Daily Step Goal</div><div class="ex-note">10,000–12,000 steps. NEAT is massively underestimated. Dog walks alone get you most of the way there every single day.</div></div><div class="ex-sets">10–12k steps</div></div>
+    <div class="slabel">Weekly Calorie Burn From Cardio Alone</div>
+    <div class="ex-row"><div><div class="ex-name">Dog Walks</div><div class="ex-note">~270 cal/day × 7 days</div></div><div class="ex-sets">~1,900/wk</div></div>
+    <div class="ex-row"><div><div class="ex-name">Gym HIIT Finishers × 6 sessions</div><div class="ex-note">~150 cal each</div></div><div class="ex-sets">~900/wk</div></div>
+    <div class="ex-row"><div><div class="ex-name">Lunch Jogs (Wks 5–6)</div><div class="ex-note">2 per cycle × ~250 cal</div></div><div class="ex-sets">~500/wk</div></div>
+    <div class="ex-row"><div><div class="ex-name">Total Weekly Cardio Burn (Peak)</div><div class="ex-note">On top of your caloric deficit — this is the accelerant</div></div><div class="ex-sets">~3,300 cal</div></div>
+    <div class="slabel">HIIT vs LISS — Why Both</div>
+    <div class="principle-grid">
+      <div class="principle"><strong>Why HIIT Finishers</strong>EPOC keeps metabolism elevated 12–24 hrs post session. Tremblay et al.: HIIT produces significantly greater fat loss than equivalent steady state — in less time.</div>
+      <div class="principle"><strong>Why Fasted Morning Walks</strong>At low intensity in a fasted state, the body preferentially burns fat. Your dog makes this automatic every morning — zero willpower required.</div>
+      <div class="principle"><strong>Why NOT Just Run Every Day</strong>High volume running + large deficit + heavy lifting = cortisol spike = muscle breakdown. Walks + HIIT finishers burn serious calories without wrecking recovery.</div>
+      <div class="principle"><strong>Post-Dinner Walk Science</strong>Colberg et al.: Even a 15-minute post-meal walk significantly reduces blood glucose response. Lower glucose = lower insulin = more fat oxidation overnight.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showModule(name, btn) {
+  document.querySelectorAll('.module').forEach(m => m.classList.remove('active'));
+  document.querySelectorAll('.top-nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('module-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+function showSub(name, btn) {
+  document.querySelectorAll('.submodule').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sub-nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sub-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+function showDay(day, btn) {
+  // find parent module/submodule and only deactivate panels within it
+  const panels = btn.closest('.day-tabs').nextElementSibling ? btn.closest('.module, .submodule') : document;
+  const container = btn.closest('.module') || btn.closest('.submodule') || document;
+  container.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
+  container.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('day-' + day).classList.add('active');
+  btn.classList.add('active');
+}
+function jumpToDay(day, cycleIdx) {
+  // activate training module
+  document.querySelectorAll('.module').forEach(m => m.classList.remove('active'));
+  document.querySelectorAll('.top-nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('module-training').classList.add('active');
+  document.querySelectorAll('.top-nav-btn')[0].classList.add('active');
+  // activate day
+  document.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('#module-training .day-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('day-' + day).classList.add('active');
+  document.getElementById('tab-' + day).classList.add('active');
+  // update cycle highlight
+  document.querySelectorAll('.cycle-day').forEach((d, i) => d.classList.toggle('active-cyc', i === cycleIdx));
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+</script>
+</body>
+</html>
